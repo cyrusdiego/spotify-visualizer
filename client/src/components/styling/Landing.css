@@ -1,0 +1,33 @@
+h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 7em;
+  color: #fff;
+}
+
+.login_button {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 20px;
+  color: #fff;
+  background-color: #000;
+  border-color: #1db954;
+}
+
+.login_button:hover {
+  background-color: #363636;
+  border-color: #363636;
+}
+
+#landing {
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#logo {
+  width: 2em;
+  height: 2em;
+  margin-left: 10px;
+}
