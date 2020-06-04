@@ -1,16 +1,31 @@
 import React, { FC, useEffect } from 'react';
 import './styling/Spectrum.css';
-import { segment, section } from '../api/spotify';
+import { segment, section, timeInterval } from '../api/spotify';
 
 interface ISpectrumProps {
   segments: segment[];
   sections: section[];
+  tatums: timeInterval[];
 }
 
 const colors = ['white', 'red', 'blue', 'green'];
 
-export const Spectrum: FC<ISpectrumProps> = ({ segments, sections }) => {
+export const Spectrum: FC<ISpectrumProps> = (props) => {
   const canvas = React.useRef<HTMLCanvasElement>(null);
+  const sections = props.sections;
+  const tatums = props.tatums;
+  let time = 0;
+  let idx = 1;
+  let j = 0;
+  let currentDuration = sections[0] ? Math.round(sections[idx].start) : 0;
+  // const timer = setInterval(() => {
+  //   time += 1;
+  //   if (currentDuration === time) {
+  //     idx += 1;
+  //     currentDuration = Math.round(sections[idx].start);
+  //     j += 1;
+  //   }
+  // }, 1000);
   useEffect(() => {
     let current = canvas.current;
     let timeoutId: NodeJS.Timeout;
@@ -19,7 +34,13 @@ export const Spectrum: FC<ISpectrumProps> = ({ segments, sections }) => {
     let currentGoal = 100;
     let oldGoal = 0;
     let diffGoal = Math.abs(currentGoal - oldGoal);
-    let bpm = sections[0] ? Math.round(sections[0].tempo) : 0;
+    console.log(tatums);
+    console.log(tatums.reduce((total, tatum) => total + tatum.duration, 0));
+    console.log(tatums.length);
+    let bpm = tatums[0]
+      ? tatums.reduce((total, tatum) => total + tatum.duration, 0) /
+        tatums.length
+      : 0;
     console.log(bpm);
     const fps = 60;
     const bars = 12;
@@ -35,7 +56,7 @@ export const Spectrum: FC<ISpectrumProps> = ({ segments, sections }) => {
             -ctx.canvas.height
           );
           ctx.fillRect(0, ctx.canvas.height, ctx.canvas.width / bars, -i);
-          ctx.fillStyle = 'white';
+          ctx.fillStyle = colors[j % colors.length];
           ctx.fill();
           requestId = requestAnimationFrame(render);
         }
@@ -46,9 +67,6 @@ export const Spectrum: FC<ISpectrumProps> = ({ segments, sections }) => {
           i <= currentGoal + diffGoal / delta
         ) {
           currentGoal = currentGoal === 0 ? 100 : 0;
-          if (currentGoal === 0) {
-            console.log('b');
-          }
         } else {
           i -= diffGoal / delta;
         }

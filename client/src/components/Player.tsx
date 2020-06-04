@@ -7,6 +7,8 @@ import {
   segment,
   getAudioAnalysis,
   section,
+  syncTrack,
+  timeInterval,
 } from '../api/spotify';
 import './styling/Player.css';
 
@@ -25,6 +27,7 @@ interface ITrackState {
 interface ITrackAnalysisState {
   segments: segment[];
   sections: section[];
+  tatums: timeInterval[];
 }
 
 export const Player: FC<{}> = () => {
@@ -49,6 +52,7 @@ export const Player: FC<{}> = () => {
     return {
       segments: [],
       sections: [],
+      tatums: [],
     };
   };
 
@@ -57,8 +61,8 @@ export const Player: FC<{}> = () => {
   const [currentTrack, setCurrentTrack] = useState(setInitialTrackState());
   const [trackAnalysis, setTrackAnalysis] = useState(setInitialTrackAnalysis());
 
-  // Update State
-  const getTokens = () => {
+  // On mount
+  useEffect(() => {
     const params = getHashParams();
     if (params) {
       setTokens({
@@ -66,14 +70,9 @@ export const Player: FC<{}> = () => {
         refreshToken: params.refresh_token,
       });
     }
-  };
-
-  // on player mount
-  useEffect(() => {
-    getTokens();
   }, []);
 
-  // on accessToken update
+  // get current track info
   useEffect(() => {
     if (tokens.accessToken) {
       handleGetCurrentTrack();
@@ -81,28 +80,41 @@ export const Player: FC<{}> = () => {
   }, [tokens.accessToken]);
 
   useEffect(() => {
-    if (currentTrack.id) {
-      getAudioAnalysis(tokens.accessToken, currentTrack.id).then((response) => {
+    if (tokens.accessToken && currentTrack.id) {
+      handleGetTrackAnalysis();
+    }
+  }, [tokens.accessToken, currentTrack.id]);
+
+  const handleGetTrackAnalysis = () => {
+    getAudioAnalysis(tokens.accessToken, currentTrack.id)
+      .then((response) => {
         const trackAnalysis = response.data;
         setTrackAnalysis({
           segments: trackAnalysis.segments,
           sections: trackAnalysis.sections,
+          tatums: trackAnalysis.tatums,
         });
+      })
+      .then(() => {
+        // syncTrack(tokens.accessToken);
       });
-    }
-  }, [currentTrack.id]);
+  };
 
   // Get current Track data
   const handleGetCurrentTrack = () => {
     getCurrentTrack(tokens.accessToken)
       .then((response) => {
-        const playerData = response.data.item;
-        setCurrentTrack({
-          artist: playerData.artists[0].name,
-          name: playerData.name,
-          art: playerData.album.images[0].url,
-          id: playerData.id,
-        });
+        if (response.status === 204) {
+          setInitialTrackState();
+        } else {
+          const playerData = response.data.item;
+          setCurrentTrack({
+            artist: playerData.artists[0].name,
+            name: playerData.name,
+            art: playerData.album.images[0].url,
+            id: playerData.id,
+          });
+        }
       })
       .catch((err) => {
         throw err;
@@ -120,6 +132,7 @@ export const Player: FC<{}> = () => {
       <Spectrum
         segments={trackAnalysis.segments}
         sections={trackAnalysis.sections}
+        tatums={trackAnalysis.tatums}
       />
     </div>
   );

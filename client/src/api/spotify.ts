@@ -38,7 +38,7 @@ interface IAudioAnalysis {
   tatums: timeInterval[];
 }
 
-type timeInterval = {
+export type timeInterval = {
   start: number;
   duration: number;
   confidence: number;
@@ -94,8 +94,42 @@ export const getAudioAnalysis = (
   token: string,
   trackID: string
 ): Promise<AxiosResponse<IAudioAnalysis>> => {
+  // pauseSong(token);
   return axios(spotifyBaseUrl + '/audio-analysis/' + trackID, {
     headers: { Authorization: 'Bearer ' + token },
     method: 'GET',
+  });
+};
+
+// Should do some error handling here in case controlling the track doesn't wokr
+export const syncTrack = (token: string): void => {
+  pauseSong(token).then(() =>
+    restartSong(token).then(() => {
+      playSong(token);
+    })
+  );
+};
+
+const restartSong = (token: string): Promise<AxiosResponse> => {
+  return axios(spotifyBaseUrl + '/me/player/seek', {
+    headers: { Authorization: 'Bearer ' + token },
+    params: {
+      position_ms: 0,
+    },
+    method: 'PUT',
+  });
+};
+
+const pauseSong = (token: string): Promise<AxiosResponse> => {
+  return axios(spotifyBaseUrl + '/me/player/pause', {
+    headers: { Authorization: 'Bearer ' + token },
+    method: 'PUT',
+  });
+};
+
+const playSong = (token: string): Promise<AxiosResponse> => {
+  return axios(spotifyBaseUrl + '/me/player/play', {
+    headers: { Authorization: 'Bearer ' + token },
+    method: 'PUT',
   });
 };
