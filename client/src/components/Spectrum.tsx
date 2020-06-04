@@ -1,9 +1,16 @@
 import React, { FC, useEffect } from 'react';
 import './styling/Spectrum.css';
+import { segment, section } from '../api/spotify';
 
-export const Spectrum: FC<{}> = () => {
+interface ISpectrumProps {
+  segments: segment[];
+  sections: section[];
+}
+
+const colors = ['white', 'red', 'blue', 'green'];
+
+export const Spectrum: FC<ISpectrumProps> = ({ segments, sections }) => {
   const canvas = React.useRef<HTMLCanvasElement>(null);
-
   useEffect(() => {
     let current = canvas.current;
     let timeoutId: NodeJS.Timeout;
@@ -12,8 +19,10 @@ export const Spectrum: FC<{}> = () => {
     let currentGoal = 100;
     let oldGoal = 0;
     let diffGoal = Math.abs(currentGoal - oldGoal);
+    let bpm = sections[0] ? Math.round(sections[0].tempo) : 0;
+    console.log(bpm);
     const fps = 60;
-    let bpm = 137;
+    const bars = 12;
     const delta = (0.5 * (fps * fps)) / bpm;
     const render = () => {
       timeoutId = setTimeout(() => {
@@ -25,7 +34,7 @@ export const Spectrum: FC<{}> = () => {
             ctx.canvas.width,
             -ctx.canvas.height
           );
-          ctx.fillRect(0.5, ctx.canvas.height, 50, -i);
+          ctx.fillRect(0, ctx.canvas.height, ctx.canvas.width / bars, -i);
           ctx.fillStyle = 'white';
           ctx.fill();
           requestId = requestAnimationFrame(render);
@@ -37,6 +46,9 @@ export const Spectrum: FC<{}> = () => {
           i <= currentGoal + diffGoal / delta
         ) {
           currentGoal = currentGoal === 0 ? 100 : 0;
+          if (currentGoal === 0) {
+            console.log('b');
+          }
         } else {
           i -= diffGoal / delta;
         }
@@ -49,7 +61,7 @@ export const Spectrum: FC<{}> = () => {
       cancelAnimationFrame(requestId);
       clearTimeout(timeoutId);
     };
-  });
+  }, [sections]);
 
   return (
     <div className='spectrum_container'>

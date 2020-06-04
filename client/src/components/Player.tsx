@@ -2,10 +2,14 @@ import React, { FC, useState, useEffect } from 'react';
 import { Preview } from './Preview';
 import { Spectrum } from './Spectrum';
 import { getHashParams } from '../api/utils';
-import spotifyApi from '../api/spotify';
-import { AxiosRequestConfig } from 'axios';
-import { spotifyBaseUrl } from '../api/constants';
+import {
+  getCurrentTrack,
+  segment,
+  getAudioAnalysis,
+  section,
+} from '../api/spotify';
 import './styling/Player.css';
+
 interface ITokenState {
   accessToken: string;
   refreshToken: string;
@@ -18,11 +22,11 @@ interface ITrackState {
   id: string;
 }
 
-// TODO:
-// 1. api call for data analysis
-//    a. will need to figure out how to sync recieved data with animation
-// 2. pass data to spectrum component
-//    a. decide if it needs to be cleaned up here or in spectrum or in some intermediate
+interface ITrackAnalysisState {
+  segments: segment[];
+  sections: section[];
+}
+
 export const Player: FC<{}> = () => {
   // Set initial states
   const setInitialTokenState: () => ITokenState = () => {
@@ -31,7 +35,8 @@ export const Player: FC<{}> = () => {
       refreshToken: '',
     };
   };
-  const setInitialSongState: () => ITrackState = () => {
+
+  const setInitialTrackState: () => ITrackState = () => {
     return {
       artist: '',
       name: '',
@@ -40,15 +45,17 @@ export const Player: FC<{}> = () => {
     };
   };
 
+  const setInitialTrackAnalysis: () => ITrackAnalysisState = () => {
+    return {
+      segments: [],
+      sections: [],
+    };
+  };
+
   // Hooks
   const [tokens, setTokens] = useState(setInitialTokenState());
-  const [currentSong, setCurrentSong] = useState(setInitialSongState());
-
-  // Spotify api instance
-  const apiConfig: AxiosRequestConfig = {
-    baseURL: spotifyBaseUrl,
-  };
-  let spotify: spotifyApi;
+  const [currentTrack, setCurrentTrack] = useState(setInitialTrackState());
+  const [trackAnalysis, setTrackAnalysis] = useState(setInitialTrackAnalysis());
 
   // Update State
   const getTokens = () => {
@@ -68,37 +75,52 @@ export const Player: FC<{}> = () => {
 
   // on accessToken update
   useEffect(() => {
-    const setConfig = (token: string) => {
-      apiConfig.headers = {
-        Authorization: 'Bearer ' + token,
-      };
-      spotify = new spotifyApi(apiConfig);
-    };
-    // Get current song data
-    const getCurrentSong = () => {
-      spotify
-        .getCurrent()
-        .then((response) => {
-          const playerData = response.data.item;
-          setCurrentSong({
-            artist: playerData.artists[0].name,
-            name: playerData.name,
-            art: playerData.album.images[0].url,
-            id: playerData.id,
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-    setConfig(tokens.accessToken);
-    getCurrentSong();
+    if (tokens.accessToken) {
+      handleGetCurrentTrack();
+    }
   }, [tokens.accessToken]);
+
+  useEffect(() => {
+    if (currentTrack.id) {
+      getAudioAnalysis(tokens.accessToken, currentTrack.id).then((response) => {
+        const trackAnalysis = response.data;
+        setTrackAnalysis({
+          segments: trackAnalysis.segments,
+          sections: trackAnalysis.sections,
+        });
+      });
+    }
+  }, [currentTrack.id]);
+
+  // Get current Track data
+  const handleGetCurrentTrack = () => {
+    getCurrentTrack(tokens.accessToken)
+      .then((response) => {
+        const playerData = response.data.item;
+        setCurrentTrack({
+          artist: playerData.artists[0].name,
+          name: playerData.name,
+          art: playerData.album.images[0].url,
+          id: playerData.id,
+        });
+      })
+      .catch((err) => {
+        throw err;
+      });
+  };
+
+  const refreshClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // will need to find a way to get new access token when it expires...
+    handleGetCurrentTrack();
+  };
 
   return (
     <div className='player_container'>
-      <Preview currentSong={currentSong} />
-      <Spectrum />
+      <Preview currentTrack={currentTrack} refresh={refreshClick} />
+      <Spectrum
+        segments={trackAnalysis.segments}
+        sections={trackAnalysis.sections}
+      />
     </div>
   );
 };

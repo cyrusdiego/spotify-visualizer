@@ -2,21 +2,17 @@ import React, { FC } from 'react';
 import './styling/Preview.css';
 
 interface IPreviewProps {
-  currentSong: {
+  currentTrack: {
     artist: string;
     name: string;
     art: string;
   };
+  refresh: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-// TODO:
-// 1. Exceptions:
-//    a. No song is playing
-//    b. No music data is recieved
-// 2. Refresh button
-export const Preview: FC<IPreviewProps> = ({ currentSong }) => {
-  const { artist, name, art } = currentSong;
-
+export const Preview: FC<IPreviewProps> = ({ currentTrack, refresh }) => {
+  const { artist, name, art } = currentTrack;
+  const refreshOnClick = refresh;
   return (
     <div className='current_song'>
       <img src={art} alt='' className='album_art'></img>
@@ -29,6 +25,7 @@ export const Preview: FC<IPreviewProps> = ({ currentSong }) => {
         <button
           type='button'
           className='refresh_button btn btn-block btn-primary'
+          onClick={refreshOnClick}
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'
