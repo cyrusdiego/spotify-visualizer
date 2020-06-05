@@ -1,31 +1,28 @@
 import React, { FC, useEffect } from 'react';
 import './styling/Spectrum.css';
 import { segment, section, timeInterval } from '../api/spotify';
+import { useSyncHooks } from './hooks/UseSyncHooks';
 
 interface ISpectrumProps {
-  segments: segment[];
-  sections: section[];
-  tatums: timeInterval[];
+  accessToken: string;
+  trackAnalysis: {
+    segments: segment[];
+    sections: section[];
+    tatums: timeInterval[];
+    beats: timeInterval[];
+    bars: timeInterval[];
+  };
+  progress: number;
 }
-
-const colors = ['white', 'red', 'blue', 'green'];
 
 export const Spectrum: FC<ISpectrumProps> = (props) => {
   const canvas = React.useRef<HTMLCanvasElement>(null);
-  const sections = props.sections;
-  const tatums = props.tatums;
-  let time = 0;
-  let idx = 1;
-  let j = 0;
-  let currentDuration = sections[0] ? Math.round(sections[idx].start) : 0;
-  // const timer = setInterval(() => {
-  //   time += 1;
-  //   if (currentDuration === time) {
-  //     idx += 1;
-  //     currentDuration = Math.round(sections[idx].start);
-  //     j += 1;
-  //   }
-  // }, 1000);
+  const elapsedTime = props.progress;
+  const { startingBeat, calcBpm } = useSyncHooks(
+    props.trackAnalysis,
+    elapsedTime
+  );
+  const sections = props.trackAnalysis.sections;
   useEffect(() => {
     let current = canvas.current;
     let timeoutId: NodeJS.Timeout;
@@ -34,17 +31,12 @@ export const Spectrum: FC<ISpectrumProps> = (props) => {
     let currentGoal = 100;
     let oldGoal = 0;
     let diffGoal = Math.abs(currentGoal - oldGoal);
-    console.log(tatums);
-    console.log(tatums.reduce((total, tatum) => total + tatum.duration, 0));
-    console.log(tatums.length);
-    let bpm = tatums[0]
-      ? tatums.reduce((total, tatum) => total + tatum.duration, 0) /
-        tatums.length
-      : 0;
-    console.log(bpm);
+    let bpm = sections[0] ? sections[0].tempo : 0;
+    const interval = (1 / bpm) * 60;
     const fps = 60;
     const bars = 12;
     const delta = (0.5 * (fps * fps)) / bpm;
+
     const render = () => {
       timeoutId = setTimeout(() => {
         if (current) {
@@ -56,7 +48,7 @@ export const Spectrum: FC<ISpectrumProps> = (props) => {
             -ctx.canvas.height
           );
           ctx.fillRect(0, ctx.canvas.height, ctx.canvas.width / bars, -i);
-          ctx.fillStyle = colors[j % colors.length];
+          ctx.fillStyle = 'white';
           ctx.fill();
           requestId = requestAnimationFrame(render);
         }
@@ -73,13 +65,15 @@ export const Spectrum: FC<ISpectrumProps> = (props) => {
       }, 1000 / fps);
     };
 
+    const timeDifference = window.performance.now() - elapsedTime;
+    setTimeout(() => {}, Math.abs(timeDifference - interval));
     render();
 
     return () => {
       cancelAnimationFrame(requestId);
       clearTimeout(timeoutId);
     };
-  }, [sections]);
+  }, [startingBeat]);
 
   return (
     <div className='spectrum_container'>

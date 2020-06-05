@@ -1,22 +1,19 @@
 // Libraries
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
 
 // Components
 import { Landing } from './components/Landing';
-import { Player } from './components/Player';
+import { Visualizer } from './components/Visualizer';
+import { useTokenHooks } from './components/hooks/UseTokenHooks';
 
-function App() {
-  return (
-    <Switch>
-      <Route path='/player'>
-        <Player />
-      </Route>
-      <Route path='/'>
-        <Landing />
-      </Route>
-    </Switch>
+const App = () => {
+  const { accessToken, refreshToken } = useTokenHooks();
+
+  return accessToken ? (
+    <Visualizer accessToken={accessToken} refreshToken={refreshToken} />
+  ) : (
+    <Landing />
   );
-}
+};
 
 export default App;

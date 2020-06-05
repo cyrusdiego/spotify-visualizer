@@ -23,6 +23,7 @@ interface IPlayerResp {
     name: string;
     id: string;
   };
+  progress_ms: number;
 }
 
 interface IAudioFeatures {
@@ -32,7 +33,7 @@ interface IAudioFeatures {
 
 interface IAudioAnalysis {
   bars: timeInterval[];
-  beat: timeInterval[];
+  beats: timeInterval[];
   sections: section[];
   segments: segment[];
   tatums: timeInterval[];
