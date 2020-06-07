@@ -31,7 +31,7 @@ interface IAudioFeatures {
   time_signature: number;
 }
 
-interface IAudioAnalysis {
+export interface IAudioAnalysis {
   bars: timeInterval[];
   beats: timeInterval[];
   sections: section[];

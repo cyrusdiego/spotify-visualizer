@@ -8,7 +8,6 @@ import { useTokenHooks } from './components/hooks/UseTokenHooks';
 
 const App = () => {
   const { accessToken, refreshToken } = useTokenHooks();
-
   return accessToken ? (
     <Visualizer accessToken={accessToken} refreshToken={refreshToken} />
   ) : (

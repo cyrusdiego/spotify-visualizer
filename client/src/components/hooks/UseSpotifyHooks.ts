@@ -63,11 +63,11 @@ export const useSpotifyHooks = (accessToken: string): ISpotifyState => {
 
   useEffect(() => {
     if (accessToken && currentTrack.id) {
-      handleGetTrackAnalysis();
+      handleGetTrackFeatures();
     }
   }, [accessToken, currentTrack.id]);
 
-  const handleGetTrackAnalysis = () => {
+  const handleGetTrackFeatures = () => {
     getAudioAnalysis(accessToken, currentTrack.id).then((response) => {
       const trackAnalysis = response.data;
       setTrackAnalysis({
@@ -81,9 +81,10 @@ export const useSpotifyHooks = (accessToken: string): ISpotifyState => {
   };
 
   // Get current Track data
-  const handleGetCurrentTrack = useCallback(() => {
+  const handleGetCurrentTrack = () => {
     getCurrentTrack(accessToken)
       .then((response) => {
+        // add some response status handling
         if (response.status === 204) {
           setInitialTrackState();
         } else {
@@ -100,7 +101,7 @@ export const useSpotifyHooks = (accessToken: string): ISpotifyState => {
       .catch((err) => {
         throw err;
       });
-  }, [accessToken]);
+  };
 
   return {
     trackInfo: currentTrack,

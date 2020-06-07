@@ -24,7 +24,6 @@ export const Visualizer: FC<IPlayerProps> = (props) => {
     <div className='player_container'>
       <Preview currentTrack={trackInfo} refresh={refreshClick} />
       <Spectrum
-        accessToken={accessToken}
         trackAnalysis={trackAnalysis}
         progress={trackInfo.progress_ms}
       />
