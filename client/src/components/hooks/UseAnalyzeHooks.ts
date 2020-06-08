@@ -30,7 +30,7 @@ export const useAnalyzeHooks = (
         (beats.reduce((total, beat) => total + beat.duration, 0) /
           beats.length) /
         2;
-      return bpm;
+      return Math.round(bpm);
     };
     setCalcBpm(getBpm());
     setStartingBeat(getActiveBeatInterval());
@@ -75,5 +75,6 @@ export const useAnalyzeHooks = (
   return {
     calcBpm,
     freqSpectrum,
+    startingBeat,
   };
 };

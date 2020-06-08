@@ -13,8 +13,12 @@ export const Spectrum: FC<ISpectrumProps> = (props) => {
   const canvas = React.useRef<HTMLCanvasElement>(null);
   const elapsedTime = props.progress;
   const trackAnalysis = props.trackAnalysis;
-  const { calcBpm, freqSpectrum } = useAnalyzeHooks(trackAnalysis, elapsedTime);
-  useRenderHooks(canvas, elapsedTime, calcBpm, freqSpectrum);
+  const { calcBpm, freqSpectrum, startingBeat } = useAnalyzeHooks(
+    trackAnalysis,
+    elapsedTime
+  );
+  console.log(freqSpectrum);
+  useRenderHooks(canvas, elapsedTime, calcBpm, freqSpectrum, startingBeat);
   return (
     <div className='spectrum_container'>
       <canvas ref={canvas} className='spectrum'></canvas>
