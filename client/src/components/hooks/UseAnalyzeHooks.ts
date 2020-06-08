@@ -10,6 +10,18 @@ export const useAnalyzeHooks = (
   const [freqSpectrum, setFreqSpectrum] = useState([[0]]);
   useEffect(() => {
     // refactor this to put in utils
+    const getBpm = (): number => {
+      const beats = trackAnalysis.segments;
+      const bpm =
+        60 /
+        (beats.reduce((total, beat) => total + beat.duration, 0) /
+          beats.length) /
+        2;
+      return Math.round(bpm);
+    };
+    setCalcBpm(getBpm());
+  }, [trackAnalysis]);
+  useEffect(() => {
     const getActiveBeatInterval = (): number => {
       if (elapsedTime === -1) return -1;
       const tatums = trackAnalysis.tatums;
@@ -23,19 +35,8 @@ export const useAnalyzeHooks = (
       }
       return tatums.length - 1;
     };
-    const getBpm = (): number => {
-      const beats = trackAnalysis.segments;
-      const bpm =
-        60 /
-        (beats.reduce((total, beat) => total + beat.duration, 0) /
-          beats.length) /
-        2;
-      return Math.round(bpm);
-    };
-    setCalcBpm(getBpm());
     setStartingBeat(getActiveBeatInterval());
-  }, [trackAnalysis]);
-
+  }, [elapsedTime, trackAnalysis]);
   useEffect(() => {
     const getFreqencySpectrum = (): number[][] => {
       const segments = trackAnalysis.segments;
@@ -45,8 +46,10 @@ export const useAnalyzeHooks = (
         const interval = segments[i];
         const end = interval.duration + interval.start;
         const start = interval.start;
-        if (start <= elapsedTime / 1000 && elapsedTime / 1000 <= end)
+        if (start <= elapsedTime / 1000 && elapsedTime / 1000 <= end) {
           segmentActiveInterval = i;
+          break;
+        }
       }
       if (segmentActiveInterval !== -1 && startingBeat !== -1) {
         let frequencies = [];
@@ -70,7 +73,7 @@ export const useAnalyzeHooks = (
       return [[]];
     };
     setFreqSpectrum(getFreqencySpectrum());
-  }, [trackAnalysis, startingBeat]);
+  }, [trackAnalysis, startingBeat, elapsedTime]);
 
   return {
     calcBpm,

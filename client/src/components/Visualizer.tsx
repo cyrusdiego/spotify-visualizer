@@ -10,11 +10,11 @@ interface IPlayerProps {
 }
 
 export const Visualizer: FC<IPlayerProps> = (props) => {
+  const appStart = window.performance.now();
   const { accessToken, refreshToken } = props;
   const { trackInfo, trackAnalysis, updateTrackHandler } = useSpotifyHooks(
     accessToken
   );
-
   const refreshClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     // will need to find a way to get new access token when it expires...
     updateTrackHandler();
@@ -26,6 +26,7 @@ export const Visualizer: FC<IPlayerProps> = (props) => {
       <Spectrum
         trackAnalysis={trackAnalysis}
         progress={trackInfo.progress_ms}
+        appStart={appStart}
       />
     </div>
   );
