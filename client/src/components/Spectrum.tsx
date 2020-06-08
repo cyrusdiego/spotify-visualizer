@@ -14,8 +14,7 @@ export const Spectrum: FC<ISpectrumProps> = (props) => {
   const elapsedTime = props.progress;
   const trackAnalysis = props.trackAnalysis;
   const { calcBpm, freqSpectrum } = useAnalyzeHooks(trackAnalysis, elapsedTime);
-  useRenderHooks(canvas, elapsedTime, calcBpm);
-
+  useRenderHooks(canvas, elapsedTime, calcBpm, freqSpectrum);
   return (
     <div className='spectrum_container'>
       <canvas ref={canvas} className='spectrum'></canvas>

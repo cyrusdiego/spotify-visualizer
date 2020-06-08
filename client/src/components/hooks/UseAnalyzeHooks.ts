@@ -9,6 +9,7 @@ export const useAnalyzeHooks = (
   const [calcBpm, setCalcBpm] = useState(0);
   const [freqSpectrum, setFreqSpectrum] = useState([[0]]);
   useEffect(() => {
+    // refactor this to put in utils
     const getActiveBeatInterval = (): number => {
       if (elapsedTime === -1) return -1;
       const tatums = trackAnalysis.tatums;
@@ -58,6 +59,7 @@ export const useAnalyzeHooks = (
             tatumIdx++;
             currentFrequencies.forEach((f) => f / 12);
             frequencies.push(currentFrequencies);
+            currentFrequencies = new Array(12).fill(0);
           }
           currentFrequencies = currentFrequencies.map(
             (f, idx) => f + segments[i].pitches[idx]
