@@ -11,39 +11,48 @@ export const useAnalyzeHooks = (
   useEffect(() => {
     // refactor this to put in utils
     const getBpm = (): number => {
-      if (trackAnalysis.sections) {
-        const sections = trackAnalysis.sections;
-        const averageTempo =
-          sections.reduce((total, section) => total + section.tempo, 0) /
-          sections.length;
-        return Math.round(averageTempo);
-      }
-      return 0;
+      if (!trackAnalysis.beats[0]) return 0;
+      const beats = trackAnalysis.beats;
+      const duration =
+        beats.reduce((total, beat) => total + beat.duration, 0) +
+        beats[0].start +
+        beats[beats.length - 1].duration;
+      const bpm = 60 / (duration / (beats.length + 2));
+      return Math.round(bpm);
     };
     setCalcBpm(getBpm());
   }, [trackAnalysis]);
   useEffect(() => {
-    const getActiveBeatInterval = (): number => {
-      if (elapsedTime === -1) return -1;
-      const tatums = trackAnalysis.tatums;
-      for (let i = 0; i < tatums.length; i++) {
-        const interval = tatums[i];
-        const end = interval.duration + interval.start;
+    const getActiveBeatInterval = (
+      trackProgress: number,
+      timeMeasured: number
+    ): number => {
+      if (trackProgress === -1 || !trackAnalysis.beats) return -1;
+      const beats = trackAnalysis.beats;
+      const delay = window.performance.now() / 1000 - timeMeasured; // seconds
+      const actualTrackProgress = trackProgress + delay;
+      for (let i = 0; i < beats.length; i++) {
+        const interval = beats[i];
         const start = interval.start;
-        if (start <= elapsedTime / 1000 && elapsedTime / 1000 <= end) {
+        const end = interval.duration + start;
+        if (start <= actualTrackProgress && actualTrackProgress <= end) {
           return i;
         }
       }
-      return tatums.length - 1;
+      return beats.length - 1;
     };
     setStartingBeat(getActiveBeatInterval());
   }, [elapsedTime, trackAnalysis]);
   useEffect(() => {
     const getFreqencySpectrum = (): number[][] => {
-      const segments = trackAnalysis.segments;
-      const tatum = trackAnalysis.tatums;
-      let segmentActiveInterval = -1;
-      for (let i = 0; i < segments.length; i++) {
+      if (trackAnalysis.segments) {
+        const segments = trackAnalysis.segments;
+        const beats = trackAnalysis.beats;
+        let prevSegmentIndex = 0;
+        let beatIndex = 0;
+        let frequencies: number[][] = [];
+        let currentFrequencies: number[] = new Array(12).fill(0);
+        for (let i = 0; i < segments.length; i++) {
         const interval = segments[i];
         const end = interval.duration + interval.start;
         const start = interval.start;
@@ -58,10 +67,14 @@ export const useAnalyzeHooks = (
         let currentFrequencies = new Array(12).fill(0);
         for (let i = segmentActiveInterval; i < segments.length; i++) {
           const segmentEnd = segments[i].start + segments[i].duration;
-          const tatumEnd = tatum[tatumIdx].start + tatum[tatumIdx].duration;
-          if (segmentEnd >= tatumEnd) {
-            tatumIdx++;
-            currentFrequencies.forEach((f) => f / 12);
+          const beatStart = beats[beatIndex].start;
+          if (segmentEnd >= beatStart) {
+            beatIndex++;
+            const numberOfMeasurements = i - prevSegmentIndex;
+            prevSegmentIndex = i;
+            currentFrequencies = currentFrequencies.map(
+              (f) => f / numberOfMeasurements
+            );
             frequencies.push(currentFrequencies);
             currentFrequencies = new Array(12).fill(0);
           }
