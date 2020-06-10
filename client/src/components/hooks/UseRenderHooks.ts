@@ -111,8 +111,8 @@ export const useRenderHooks = (
         requestId = requestAnimationFrame(animate);
       }, 1000 / fps);
     };
-
-    const pause = getTimeDiff(interval, beatIdx, appStart, elapsedTime);
+    const pause = getTimeDiff(interval, timeError, trackProgress);
+    beatIndex = getCurrentBeatIndex(trackProgress, interval);
     setTimeout(() => {
       animate();
     }, pause);
