@@ -11,13 +11,14 @@ export const useAnalyzeHooks = (
   useEffect(() => {
     // refactor this to put in utils
     const getBpm = (): number => {
-      const beats = trackAnalysis.segments;
-      const bpm =
-        60 /
-        (beats.reduce((total, beat) => total + beat.duration, 0) /
-          beats.length) /
-        2;
-      return Math.round(bpm);
+      if (trackAnalysis.sections) {
+        const sections = trackAnalysis.sections;
+        const averageTempo =
+          sections.reduce((total, section) => total + section.tempo, 0) /
+          sections.length;
+        return Math.round(averageTempo);
+      }
+      return 0;
     };
     setCalcBpm(getBpm());
   }, [trackAnalysis]);
