@@ -22,6 +22,7 @@ interface IPlayerResp {
     artists: artists[];
     name: string;
     id: string;
+    duration_ms: number;
   };
   progress_ms: number;
 }

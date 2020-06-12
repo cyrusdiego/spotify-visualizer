@@ -1,8 +1,9 @@
 import React, { FC } from 'react';
-import { Preview } from './Preview';
+import { Player } from './Player';
 import { Spectrum } from './Spectrum';
 import './styling/Player.css';
 import { useSpotifyHooks } from './hooks/UseSpotifyHooks';
+import { useHover } from './hooks/UseHoverHooks';
 
 interface IPlayerProps {
   accessToken: string;
@@ -10,23 +11,23 @@ interface IPlayerProps {
 }
 
 export const Visualizer: FC<IPlayerProps> = (props) => {
-  const appStart = window.performance.now();
   const { accessToken, refreshToken } = props;
   const { trackInfo, trackAnalysis, updateTrackHandler } = useSpotifyHooks(
     accessToken
   );
   const refreshClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     // will need to find a way to get new access token when it expires...
-    updateTrackHandler();
+    // updateTrackHandler();
   };
 
   return (
     <div className='player_container'>
-      <Preview currentTrack={trackInfo} refresh={refreshClick} />
+      <Player currentTrack={trackInfo} refresh={refreshClick} />
       <Spectrum
         trackAnalysis={trackAnalysis}
-        progress={trackInfo.progress_ms}
-        appStart={appStart}
+        trackProgress={trackInfo.progress_s}
+        timeMeasured={trackInfo.timeMeasured_s}
+        duration={trackInfo.duration_s}
       />
     </div>
   );

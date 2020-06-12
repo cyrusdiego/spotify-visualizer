@@ -1,7 +1,6 @@
-import { ICanvasInfo } from '../types/analyzeTypes';
+//global to hold current beat index and avoid re calculation
 let beatIndex = 0;
-// this should be moved to render utils
-// pretty sure this calculation is wrong...
+
 export const getTimeDiff = (
   interval: number, // time between beats
   timeMeasured: number, // time the elapsed time was recieved from api
@@ -19,19 +18,11 @@ export const getTimeDiff = (
   return timeWindowMs < half ? timeWindowMs + half : timeWindowMs - half;
 };
 
+// experiment with the returning beat index
 export const getCurrentBeatIndex = (total: number, period: number) => {
   if (beatIndex !== 0) return beatIndex;
   else {
-    beatIndex = Math.round(total / period);
+    beatIndex = Math.floor(total / period);
     return beatIndex;
   }
-};
-
-export const setInitialCanvas = (): ICanvasInfo => {
-  return {
-    context: null,
-    height: 0,
-    width: 0,
-    maxBarHeight: 0,
-  };
 };

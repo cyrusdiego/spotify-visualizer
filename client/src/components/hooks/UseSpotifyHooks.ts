@@ -7,15 +7,17 @@ import {
   timeInterval,
 } from '../../api/spotify';
 
-interface ITrackInfoState {
+interface ITrackInfo {
   artist: string;
   name: string;
   art: string;
   id: string;
-  progress_ms: number;
+  progress_s: number;
+  timeMeasured_s: number;
+  duration_s: number;
 }
 
-export interface ITrackAnalysisState {
+export interface ITrackAnalysis {
   segments: segment[];
   sections: section[];
   tatums: timeInterval[];
@@ -23,38 +25,39 @@ export interface ITrackAnalysisState {
   bars: timeInterval[];
 }
 
-interface ISpotifyState {
-  trackInfo: ITrackInfoState;
-  trackAnalysis: ITrackAnalysisState;
+interface ISpotifyData {
+  trackInfo: ITrackInfo;
+  trackAnalysis: ITrackAnalysis;
   updateTrackHandler: () => void;
 }
 
-export const useSpotifyHooks = (accessToken: string): ISpotifyState => {
-  const setInitialTrackState: () => ITrackInfoState = () => {
-    return {
-      artist: '',
-      name: '',
-      id: '',
-      art: '',
-      progress_ms: -1,
-    };
+const setInitialTrackState: () => ITrackInfo = () => {
+  return {
+    artist: '',
+    name: '',
+    id: '',
+    art: '',
+    progress_s: -1,
+    timeMeasured_s: 0,
+    duration_s: 0,
   };
+};
 
-  const setInitialTrackAnalysis: () => ITrackAnalysisState = () => {
-    return {
-      segments: [],
-      sections: [],
-      tatums: [],
-      beats: [],
-      bars: [],
-    };
+const setInitialTrackAnalysis: () => ITrackAnalysis = () => {
+  return {
+    segments: [],
+    sections: [],
+    tatums: [],
+    beats: [],
+    bars: [],
   };
+};
 
+export const useSpotifyHooks = (accessToken: string): ISpotifyData => {
   // Hooks
   const [currentTrack, setCurrentTrack] = useState(setInitialTrackState());
   const [trackAnalysis, setTrackAnalysis] = useState(setInitialTrackAnalysis());
 
-  // get current track info
   useEffect(() => {
     if (accessToken) {
       handleGetCurrentTrack();
@@ -84,7 +87,6 @@ export const useSpotifyHooks = (accessToken: string): ISpotifyState => {
   const handleGetCurrentTrack = () => {
     getCurrentTrack(accessToken)
       .then((response) => {
-        // add some response status handling
         if (response.status === 204) {
           setInitialTrackState();
         } else {
@@ -94,7 +96,9 @@ export const useSpotifyHooks = (accessToken: string): ISpotifyState => {
             name: playerData.item.name,
             art: playerData.item.album.images[0].url,
             id: playerData.item.id,
-            progress_ms: playerData.progress_ms,
+            progress_s: playerData.progress_ms / 1000,
+            timeMeasured_s: window.performance.now() / 1000,
+            duration_s: playerData.item.duration_ms / 1000,
           });
         }
       })

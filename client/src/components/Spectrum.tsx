@@ -6,29 +6,28 @@ import { useRenderHooks } from './hooks/UseRenderHooks';
 
 interface ISpectrumProps {
   trackAnalysis: IAudioAnalysis;
-  progress: number;
-  appStart: number;
+  trackProgress: number;
+  timeMeasured: number;
+  duration: number;
 }
 
 export const Spectrum: FC<ISpectrumProps> = (props) => {
   const canvas = React.useRef<HTMLCanvasElement>(null);
-  const elapsedTime = props.progress;
+  const trackProgress = props.trackProgress;
   const trackAnalysis = props.trackAnalysis;
-  const { calcBpm, freqSpectrum, startingBeat } = useAnalyzeHooks(
-    trackAnalysis,
-    elapsedTime
-  );
-  useRenderHooks(
-    canvas,
-    elapsedTime,
-    calcBpm,
-    freqSpectrum,
-    startingBeat,
-    props.appStart
-  );
+  const timeMeasured = props.timeMeasured;
+  const height = window.innerHeight;
+  const width = window.innerWidth;
+  const { bpm, spectrum } = useAnalyzeHooks(trackAnalysis);
+  useRenderHooks(canvas, trackProgress, bpm, spectrum, timeMeasured);
   return (
     <div className='spectrum_container'>
-      <canvas ref={canvas} className='spectrum'></canvas>
+      <canvas
+        ref={canvas}
+        className='spectrum'
+        height={height}
+        width={width}
+      ></canvas>
     </div>
   );
 };

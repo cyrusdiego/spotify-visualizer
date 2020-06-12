@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
-import './styling/Preview.css';
+import './styling/Player.css';
 
-interface IPreviewProps {
+interface IPlayerProps {
   currentTrack: {
     artist: string;
     name: string;
@@ -10,31 +10,28 @@ interface IPreviewProps {
   refresh: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-export const Preview: FC<IPreviewProps> = ({ currentTrack, refresh }) => {
+export const Player: FC<IPlayerProps> = ({ currentTrack, refresh }) => {
   const { artist, name, art } = currentTrack;
   const refreshOnClick = refresh;
   return (
     <div className='current_song'>
       <img src={art} alt='' className='album_art'></img>
       <div className='song_info'>
-        {' '}
         <h2>{name}</h2>
         <h3>{artist}</h3>
       </div>
       <div className='refresh_container'>
         <button
           type='button'
-          className='refresh_button btn btn-block btn-primary'
+          className='refresh_button btn '
           onClick={refreshOnClick}
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'
-            width='25'
-            height='25'
-            viewBox='0 0 24 24'
-            fill='white'
+            viewBox='0 0 24 22'
+            className='refresh_icon'
           >
-            <path d='M13.5 2c-5.621 0-10.211 4.443-10.475 10h-3.025l5 6.625 5-6.625h-2.975c.257-3.351 3.06-6 6.475-6 3.584 0 6.5 2.916 6.5 6.5s-2.916 6.5-6.5 6.5c-1.863 0-3.542-.793-4.728-2.053l-2.427 3.216c1.877 1.754 4.389 2.837 7.155 2.837 5.79 0 10.5-4.71 10.5-10.5s-4.71-10.5-10.5-10.5z' />
+            <path d='M20.944 12.979c-.489 4.509-4.306 8.021-8.944 8.021-2.698 0-5.112-1.194-6.763-3.075l1.245-1.633c1.283 1.645 3.276 2.708 5.518 2.708 3.526 0 6.444-2.624 6.923-6.021h-2.923l4-5.25 4 5.25h-3.056zm-15.864-1.979c.487-3.387 3.4-6 6.92-6 2.237 0 4.228 1.059 5.51 2.698l1.244-1.632c-1.65-1.876-4.061-3.066-6.754-3.066-4.632 0-8.443 3.501-8.941 8h-3.059l4 5.25 4-5.25h-2.92z' />
           </svg>
         </button>
       </div>
