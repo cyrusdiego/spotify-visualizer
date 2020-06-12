@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   getAudioAnalysis,
   getCurrentTrack,
@@ -8,6 +8,7 @@ import {
 } from '../../api/spotify';
 
 interface ITrackInfo {
+  available: boolean;
   artist: string;
   name: string;
   art: string;
@@ -18,6 +19,7 @@ interface ITrackInfo {
 }
 
 export interface ITrackAnalysis {
+  available: boolean;
   segments: segment[];
   sections: section[];
   tatums: timeInterval[];
@@ -33,6 +35,7 @@ interface ISpotifyData {
 
 const setInitialTrackState: () => ITrackInfo = () => {
   return {
+    available: false,
     artist: '',
     name: '',
     id: '',
@@ -45,6 +48,7 @@ const setInitialTrackState: () => ITrackInfo = () => {
 
 const setInitialTrackAnalysis: () => ITrackAnalysis = () => {
   return {
+    available: false,
     segments: [],
     sections: [],
     tatums: [],
@@ -74,6 +78,7 @@ export const useSpotifyHooks = (accessToken: string): ISpotifyData => {
     getAudioAnalysis(accessToken, currentTrack.id).then((response) => {
       const trackAnalysis = response.data;
       setTrackAnalysis({
+        available: true,
         segments: trackAnalysis.segments,
         sections: trackAnalysis.sections,
         tatums: trackAnalysis.tatums,
@@ -92,6 +97,7 @@ export const useSpotifyHooks = (accessToken: string): ISpotifyData => {
         } else {
           const playerData = response.data;
           setCurrentTrack({
+            available: true,
             artist: playerData.item.artists[0].name,
             name: playerData.item.name,
             art: playerData.item.album.images[0].url,

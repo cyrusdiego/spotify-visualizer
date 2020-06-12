@@ -15,20 +15,24 @@ export const Visualizer: FC<IPlayerProps> = (props) => {
   const { trackInfo, trackAnalysis, updateTrackHandler } = useSpotifyHooks(
     accessToken
   );
+  const isReady = trackInfo.available && trackAnalysis.available;
   const refreshClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     // will need to find a way to get new access token when it expires...
     // updateTrackHandler();
   };
 
-  return (
-    <div className='player_container'>
-      <Player currentTrack={trackInfo} refresh={refreshClick} />
-      <Spectrum
-        trackAnalysis={trackAnalysis}
-        trackProgress={trackInfo.progress_s}
-        timeMeasured={trackInfo.timeMeasured_s}
-        duration={trackInfo.duration_s}
-      />
-    </div>
-  );
+  if (isReady) {
+    return (
+      <div className='player_container'>
+        <Player currentTrack={trackInfo} refresh={refreshClick} />
+        <Spectrum
+          trackAnalysis={trackAnalysis}
+          trackProgress={trackInfo.progress_s}
+          timeMeasured={trackInfo.timeMeasured_s}
+          duration={trackInfo.duration_s}
+        />
+      </div>
+    );
+  }
+  return <div className='player_container'></div>;
 };
