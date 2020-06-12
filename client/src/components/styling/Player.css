@@ -1,3 +1,107 @@
 .player_container {
   height: 100vh;
 }
+
+.album_art {
+  width: 150px;
+  height: 150px;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  display: block;
+  margin: 0px 20px 0px 20px;
+}
+
+.current_song {
+  font-family: 'Montserrat', sans-serif;
+  display: inline-flex;
+  color: gray;
+  width: 100vw;
+  height: 20%;
+}
+
+.song_info {
+  max-height: 100px;
+  margin-top: 20px;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  display: block;
+}
+
+.refresh_button {
+  background-color: black;
+  border-color: #363636;
+  fill: #363636;
+  width: 50px;
+  height: 50px;
+  border-radius: 2px;
+  text-align: center;
+}
+
+.refresh_button:hover {
+  background-color: #000;
+  animation: color-change 2s infinite;
+}
+.refresh_button:active {
+  background-color: #363636;
+  fill: #000;
+  border-color: #000;
+  animation: none;
+}
+.refresh_button:focus {
+  box-shadow: none !important;
+}
+
+.refresh_icon {
+  display: block;
+  margin: 0 auto;
+}
+.refresh_container {
+  margin-left: auto;
+  margin-right: 20px;
+  margin-top: 20px;
+}
+
+@keyframes color-change {
+  0% {
+    color: #ffadad;
+    fill: #ffadad;
+    border-color: #ffadad;
+  }
+  14% {
+    color: #ffd6a5;
+    fill: #ffd6a5;
+    border-color: #ffd6a5;
+  }
+  28% {
+    color: #fdffb6;
+    fill: #fdffb6;
+    border-color: #fdffb6;
+  }
+  42% {
+    color: #caffbf;
+    fill: #caffbf;
+    border-color: #caffbf;
+  }
+  56% {
+    color: #9bf6ff;
+    fill: #9bf6ff;
+    border-color: #9bf6ff;
+  }
+  70% {
+    color: #a0c4ff;
+    fill: #a0c4ff;
+    border-color: #a0c4ff;
+  }
+  84% {
+    color: #bdb2ff;
+    fill: #bdb2ff;
+    border-color: #bdb2ff;
+  }
+  100% {
+    color: #ffc6ff;
+    fill: #ffc6ff;
+    border-color: #ffc6ff;
+  }
+}
