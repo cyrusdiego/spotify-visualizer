@@ -3,7 +3,7 @@ import { Player } from './Player';
 import { Spectrum } from './Spectrum';
 import './styling/Player.css';
 import { useSpotifyHooks } from './hooks/UseSpotifyHooks';
-import { useHover } from './hooks/UseHoverHooks';
+import { useVisibilityHooks } from './hooks/UseVisibilityHooks';
 
 interface IPlayerProps {
   accessToken: string;
@@ -20,6 +20,7 @@ export const Visualizer: FC<IPlayerProps> = (props) => {
     // will need to find a way to get new access token when it expires...
     // updateTrackHandler();
   };
+  useVisibilityHooks();
 
   if (isReady) {
     return (
