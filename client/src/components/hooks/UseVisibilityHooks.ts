@@ -5,40 +5,34 @@ function usePrevActiveState(value: boolean) {
   const ref = useRef(false);
   useEffect(() => {
     ref.current = value;
-    console.log(ref.current);
   });
   return ref.current;
 }
 
-// credit: https://stackoverflow.com/questions/49902883/check-if-the-browser-tab-is-in-focus-in-reactjs
+// credit: https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
 export const useVisibilityHooks = () => {
   const [animationWasStopped, setAnimationWasStopped] = useState(false);
   const prevState = usePrevActiveState(animationWasStopped);
   useEffect(() => {
+    if (
+      typeof document.addEventListener === 'undefined' ||
+      typeof document.hidden === undefined
+    ) {
+      console.log(
+        'This demo requires a browser, such as Google Chrome or Firefox, that supports the Page Visibility API.'
+      );
+    }
     document.addEventListener('visibilitychange', handleActivity);
-    document.addEventListener('blur', () => handleActivity(false));
-    window.addEventListener('blur', () => handleActivity(false));
-    window.addEventListener('focus', () => handleActivity(true));
-    document.addEventListener('focus', () => handleActivity(true));
-
     return () => {
-      window.removeEventListener('blur', handleActivity);
-      document.removeEventListener('blur', handleActivity);
-      window.removeEventListener('focus', handleActivity);
-      document.removeEventListener('focus', handleActivity);
       document.removeEventListener('visibilitychange', handleActivity);
     };
-  });
+  }, []);
 
   // react will only re-render (and update beat index in render hooks)
-  // when the user comes back to the window
-  const handleActivity = (forcedFlag: any) => {
-    // this part handles when it's triggered by the focus and blur events
-    if (typeof forcedFlag === 'boolean') {
-      const animationState = forcedFlag && !prevState;
-      return setAnimationWasStopped(animationState);
-    }
+  // when the window is visible
+  // only change the animationWasStopped state if prevState is false
+  const handleActivity = () => {
     const animationState = document.hidden && !prevState;
-    return setAnimationWasStopped(animationState);
+    return animationState ? setAnimationWasStopped(animationState) : () => {};
   };
 };
