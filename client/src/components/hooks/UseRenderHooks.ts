@@ -175,7 +175,7 @@ export const useRenderHooks = (
       }, 1000 / fps);
     };
 
-    // don't animate until next downbeatre
+    // don't animate until next downbeat
     setTimeout(() => {
       animate();
     }, pause);
