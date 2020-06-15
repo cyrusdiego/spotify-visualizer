@@ -40,11 +40,11 @@ export const useAnalyzeHooks = (
         let frequencies: number[][] = [];
         let currentFrequencies: number[] = new Array(12).fill(0);
         for (let i = 0; i < segments.length; i++) {
+          if (beatIndex >= beats.length) break;
           const segmentEnd = segments[i].start + segments[i].duration;
           const beatStart = beats[beatIndex].start;
           if (segmentEnd >= beatStart) {
-            if (beatIndex < beats.length - 1) beatIndex++;
-
+            beatIndex += 1;
             const numberOfMeasurements = i - prevSegmentIndex;
             prevSegmentIndex = i;
             currentFrequencies = currentFrequencies.map(

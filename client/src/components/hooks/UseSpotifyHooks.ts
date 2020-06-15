@@ -70,11 +70,11 @@ export const useSpotifyHooks = (accessToken: string): ISpotifyData => {
 
   useEffect(() => {
     if (accessToken && currentTrack.id) {
-      handleGetTrackFeatures();
+      handleGetTrackAnalysis();
     }
   }, [accessToken, currentTrack.id]);
 
-  const handleGetTrackFeatures = () => {
+  const handleGetTrackAnalysis = () => {
     getAudioAnalysis(accessToken, currentTrack.id).then((response) => {
       const trackAnalysis = response.data;
       setTrackAnalysis({

@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { getTimeDiff, getCurrentBeatIndex } from './utils/renderUtils';
 
 interface ICanvasInfo {
@@ -17,17 +17,16 @@ const setInitialCanvas = (): ICanvasInfo => {
   };
 };
 
-// current color rotation
 const colors = [
-  'ffadad',
-  'ffd6a5',
-  'fdffb6',
-  'caffbf',
-  '9bf6ff',
-  'a0c4ff',
-  'bdb2ff',
-  'ffc6ff',
-  'fffffc',
+  'rgba(255, 173, 173, 0.5)',
+  'rgba(255, 214, 165, 0.5)',
+  'rgba(253, 255, 182, 0.5)',
+  'rgba(202, 255, 191, 0.5)',
+  'rgba(155, 246, 255, 0.5)',
+  'rgba(160, 196, 255, 0.5)',
+  'rgba(189, 178, 255, 0.5)',
+  'rgba(255, 198, 255, 0.5)',
+  'rgba(255, 255, 252, 0.5)',
 ];
 
 export const useRenderHooks = (
@@ -37,14 +36,16 @@ export const useRenderHooks = (
   spectrum: number[][], // full song spectrum
   timeError: number // time elapsedTime was measured
 ) => {
-  let beatIndex = 0;
   const [canvas, setCanvas] = useState(setInitialCanvas());
   const interval = 60 / bpm;
-  // const interval = duration / (numberOfBeats + 2)
+  // get time difference between time of api data return and now
+  const pause = getTimeDiff(interval, timeError, trackProgress);
+  let beatIndex = getCurrentBeatIndex(trackProgress, interval);
+
   const fps = 60;
   const bars = 12;
   const timeDiffOnDraw = (0.5 * (fps * fps)) / bpm;
-  const minHeight = 0;
+  const minHeight = 50;
 
   // get canvas information
   useEffect(() => {
@@ -75,12 +76,12 @@ export const useRenderHooks = (
   let colorIdx = 0;
   let timeoutId: NodeJS.Timeout;
   let requestId: number;
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (
       !canvas.context ||
       bpm === 0 ||
       trackProgress === -1 ||
-      spectrum.length <= 1
+      !spectrum.length
     ) {
       return;
     }
@@ -143,13 +144,13 @@ export const useRenderHooks = (
 
       for (let i = 0; i < bars; i++) {
         ctx.fillRect(
-          x - 1.5,
+          x,
           canvas.height,
-          barWidth + 0.5,
+          barWidth - 0.5,
           -barHeights[i] * (canvas.height - minHeight)
         );
         x += barWidth;
-        ctx.fillStyle = '#' + colors[colorIdx % colors.length];
+        ctx.fillStyle = colors[colorIdx % colors.length];
         ctx.fill();
       }
     };
@@ -157,20 +158,24 @@ export const useRenderHooks = (
     // animation loop using request animation frame and timeout to set fps
     const animate = () => {
       timeoutId = setTimeout(() => {
-        if (beatIndex > spectrum.length) return;
+        // clear canvas when song has finished
+        if (beatIndex > spectrum.length - 1) {
+          canvas.context!!.clearRect(
+            0,
+            canvas.height,
+            canvas.width,
+            -canvas.maxBarHeight
+          );
+          return;
+        }
+
         update();
         draw();
         requestId = requestAnimationFrame(animate);
       }, 1000 / fps);
     };
 
-    // get time difference between time of api data return and now
-    const pause = getTimeDiff(interval, timeError, trackProgress);
-
-    // get spectrum index to start animation from
-    beatIndex = getCurrentBeatIndex(trackProgress, interval);
-
-    // don't animate until next downbeat
+    // don't animate until next downbeatre
     setTimeout(() => {
       animate();
     }, pause);
