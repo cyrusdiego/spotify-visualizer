@@ -33,6 +33,8 @@ export const useVisibilityHooks = () => {
   // only change the animationWasStopped state if prevState is false
   const handleActivity = () => {
     const animationState = document.hidden && !prevState;
-    return animationState ? setAnimationWasStopped(animationState) : () => {};
+    return setAnimationWasStopped(animationState);
   };
+
+  return !animationWasStopped;
 };

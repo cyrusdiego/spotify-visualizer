@@ -3,7 +3,6 @@ import { Player } from './Player';
 import { Spectrum } from './Spectrum';
 import './styling/Player.css';
 import { useSpotifyHooks } from './hooks/UseSpotifyHooks';
-import { useVisibilityHooks } from './hooks/UseVisibilityHooks';
 
 interface IPlayerProps {
   accessToken: string;
@@ -18,9 +17,8 @@ export const Visualizer: FC<IPlayerProps> = (props) => {
   const isReady = trackInfo.available && trackAnalysis.available;
   const refreshClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     // will need to find a way to get new access token when it expires...
-    // updateTrackHandler();
+    updateTrackHandler();
   };
-  useVisibilityHooks();
 
   if (isReady) {
     return (
@@ -30,7 +28,7 @@ export const Visualizer: FC<IPlayerProps> = (props) => {
           trackAnalysis={trackAnalysis}
           trackProgress={trackInfo.progress_s}
           timeMeasured={trackInfo.timeMeasured_s}
-          duration={trackInfo.duration_s}
+          updateTrack={updateTrackHandler}
         />
       </div>
     );

@@ -1,3 +1,4 @@
+// credit: http://www.petecorey.com/blog/2019/08/19/animating-a-canvas-with-react-hooks/
 import { useState, useEffect } from 'react';
 import { getTimeDiff, getCurrentBeatIndex } from './utils/renderUtils';
 
@@ -182,6 +183,12 @@ export const useRenderHooks = (
 
     // clean up
     return () => {
+      canvas.context!!.clearRect(
+        0,
+        canvas.height,
+        canvas.width,
+        -canvas.maxBarHeight
+      );
       clearTimeout(timeoutId);
       cancelAnimationFrame(requestId);
     };

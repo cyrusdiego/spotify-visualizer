@@ -8,14 +8,12 @@ interface ISpectrumProps {
   trackAnalysis: ITrackAnalysis;
   trackProgress: number;
   timeMeasured: number;
-  duration: number;
+  updateTrack: () => void;
 }
 
 export const Spectrum: FC<ISpectrumProps> = (props) => {
   const canvas = React.useRef<HTMLCanvasElement>(null);
-  const trackProgress = props.trackProgress;
-  const trackAnalysis = props.trackAnalysis;
-  const timeMeasured = props.timeMeasured;
+  const { trackProgress, trackAnalysis, timeMeasured, updateTrack } = props;
   const height = window.innerHeight;
   const width = window.innerWidth;
   const { bpm, spectrum } = useAnalyzeHooks(trackAnalysis);

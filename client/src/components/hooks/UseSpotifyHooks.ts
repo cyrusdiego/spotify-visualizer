@@ -96,16 +96,25 @@ export const useSpotifyHooks = (accessToken: string): ISpotifyData => {
           setInitialTrackState();
         } else {
           const playerData = response.data;
-          setCurrentTrack({
-            available: true,
-            artist: playerData.item.artists[0].name,
-            name: playerData.item.name,
-            art: playerData.item.album.images[0].url,
-            id: playerData.item.id,
-            progress_s: playerData.progress_ms / 1000,
-            timeMeasured_s: window.performance.now() / 1000,
-            duration_s: playerData.item.duration_ms / 1000,
-          });
+          if (playerData.item.id === currentTrack.id) {
+            setCurrentTrack({
+              ...currentTrack,
+              progress_s: playerData.progress_ms / 1000,
+              timeMeasured_s: window.performance.now() / 1000,
+              duration_s: playerData.item.duration_ms / 1000,
+            });
+          } else {
+            setCurrentTrack({
+              available: true,
+              artist: playerData.item.artists[0].name,
+              name: playerData.item.name,
+              art: playerData.item.album.images[0].url,
+              id: playerData.item.id,
+              progress_s: playerData.progress_ms / 1000,
+              timeMeasured_s: window.performance.now() / 1000,
+              duration_s: playerData.item.duration_ms / 1000,
+            });
+          }
         }
       })
       .catch((err) => {

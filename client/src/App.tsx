@@ -5,9 +5,11 @@ import React from 'react';
 import { Landing } from './components/Landing';
 import { Visualizer } from './components/Visualizer';
 import { useTokenHooks } from './components/hooks/UseTokenHooks';
+import { useVisibilityHooks } from './components/hooks/UseVisibilityHooks';
 
 const App = () => {
   const { accessToken, refreshToken } = useTokenHooks();
+  const wakeAnimation = useVisibilityHooks();
   return accessToken ? (
     <Visualizer accessToken={accessToken} refreshToken={refreshToken} />
   ) : (
