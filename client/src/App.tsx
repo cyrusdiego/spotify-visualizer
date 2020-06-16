@@ -9,7 +9,7 @@ import { useVisibilityHooks } from './components/hooks/UseVisibilityHooks';
 
 const App = () => {
   const { accessToken, refreshToken } = useTokenHooks();
-  const wakeAnimation = useVisibilityHooks();
+  useVisibilityHooks();
   return accessToken ? (
     <Visualizer accessToken={accessToken} refreshToken={refreshToken} />
   ) : (
