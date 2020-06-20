@@ -15,6 +15,6 @@ module.exports.generateRandomString = (length) => {
 };
 
 module.exports.stateKey = 'spotify_auth_state';
-module.exports.client_id = '64f6322c7654482384c5d0b9798d0973'; // Your client id
-module.exports.client_secret = 'eb53c9dfe6074fdd932072a811e8c8e6'; // Your secret
+module.exports.client_id = process.env.SPOTIFY_CLIENT_ID; // Your client id
+module.exports.client_secret = process.env.SPOTIFY_CLIENT_SECRETY; // Your secret
 module.exports.redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
