@@ -71,6 +71,8 @@ export const useSpotifyHooks = (accessToken: string): ISpotifyData => {
   useEffect(() => {
     if (accessToken && currentTrack.id) {
       handleGetTrackAnalysis();
+    } else {
+      setTrackAnalysis({ ...trackAnalysis, available: false });
     }
   }, [accessToken, currentTrack.id]);
 
