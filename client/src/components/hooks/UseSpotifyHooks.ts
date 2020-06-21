@@ -82,7 +82,7 @@ export const useSpotifyHooks = (
     getAudioAnalysis(accessToken, currentTrack.id).then((response) => {
       const trackAnalysis = response.data;
       setTrackAnalysis({
-        available: true,
+        available: trackAnalysis.beats.length > 0,
         segments: trackAnalysis.segments,
         sections: trackAnalysis.sections,
         tatums: trackAnalysis.tatums,

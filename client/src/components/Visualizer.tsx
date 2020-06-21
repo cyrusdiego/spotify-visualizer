@@ -18,6 +18,7 @@ export const Visualizer: FC<IPlayerProps> = (props) => {
     setAccessToken
   );
   const isReady = trackInfo.is_playing && trackAnalysis.available;
+  const isAvailable = trackAnalysis.available;
   const refreshClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     // will need to find a way to get new access token when it expires...
     updateTrackHandler();
@@ -39,7 +40,11 @@ export const Visualizer: FC<IPlayerProps> = (props) => {
         />
       ) : (
         <div className='error_container'>
-          <h1>Ensure track is playing</h1>
+          <h1>
+            {isAvailable
+              ? 'Ensure track is playing'
+              : 'Track analysis unavailble, pick a different track'}
+          </h1>
           <h3>Press refresh button</h3>
         </div>
       )}
