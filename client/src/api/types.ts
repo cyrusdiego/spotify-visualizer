@@ -21,6 +21,7 @@ export interface IPlayerResp {
     id: string;
     duration_ms: number;
   };
+  is_playing: boolean;
   progress_ms: number;
 }
 

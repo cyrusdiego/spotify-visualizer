@@ -7,7 +7,6 @@ import {
 import { segment, section, timeInterval } from '../../api/types';
 
 interface ITrackInfo {
-  available: boolean;
   artist: string;
   name: string;
   art: string;
@@ -15,6 +14,7 @@ interface ITrackInfo {
   progress_s: number;
   timeMeasured_s: number;
   duration_s: number;
+  is_playing: boolean;
 }
 
 export interface ITrackAnalysis {
@@ -34,7 +34,6 @@ interface ISpotifyData {
 
 const setInitialTrackState: () => ITrackInfo = () => {
   return {
-    available: false,
     artist: '',
     name: '',
     id: '',
@@ -42,6 +41,7 @@ const setInitialTrackState: () => ITrackInfo = () => {
     progress_s: -1,
     timeMeasured_s: 0,
     duration_s: 0,
+    is_playing: false,
   };
 };
 
@@ -106,10 +106,10 @@ export const useSpotifyHooks = (
               progress_s: playerData.progress_ms / 1000,
               timeMeasured_s: window.performance.now() / 1000,
               duration_s: playerData.item.duration_ms / 1000,
+              is_playing: playerData.is_playing,
             });
           } else {
             setCurrentTrack({
-              available: true,
               artist: playerData.item.artists[0].name,
               name: playerData.item.name,
               art: playerData.item.album.images[0].url,
@@ -117,6 +117,7 @@ export const useSpotifyHooks = (
               progress_s: playerData.progress_ms / 1000,
               timeMeasured_s: window.performance.now() / 1000,
               duration_s: playerData.item.duration_ms / 1000,
+              is_playing: playerData.is_playing,
             });
           }
         }

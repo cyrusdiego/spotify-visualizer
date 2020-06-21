@@ -17,24 +17,29 @@ export const Visualizer: FC<IPlayerProps> = (props) => {
     refreshToken,
     setAccessToken
   );
-  const isReady = trackInfo.available && trackAnalysis.available;
+  const isReady = trackInfo.is_playing && trackAnalysis.available;
   const refreshClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     // will need to find a way to get new access token when it expires...
     updateTrackHandler();
   };
 
-  if (isReady) {
-    return (
-      <div className='player_container'>
-        <Player currentTrack={trackInfo} refresh={refreshClick} />
+  return (
+    <div className='player_container'>
+      <Player
+        currentTrack={trackInfo}
+        refresh={refreshClick}
+        isReady={isReady}
+      />
+      {isReady ? (
         <Spectrum
           trackAnalysis={trackAnalysis}
           trackProgress={trackInfo.progress_s}
           timeMeasured={trackInfo.timeMeasured_s}
           updateTrack={updateTrackHandler}
         />
-      </div>
-    );
-  }
-  return <div className='player_container'></div>;
+      ) : (
+        ''
+      )}
+    </div>
+  );
 };
