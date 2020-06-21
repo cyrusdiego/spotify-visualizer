@@ -42,17 +42,9 @@ module.exports = (app) => {
 
       request.post(authOptions, function (error, response, body) {
         if (!error && response.statusCode === 200) {
-          var access_token = body.access_token,
-            refresh_token = body.refresh_token;
-
-          // we can also pass the token to the browser to make requests from there
-          res.redirect(
-            'http://localhost:3000/#' +
-              querystring.stringify({
-                access_token: access_token,
-                refresh_token: refresh_token,
-              })
-          );
+          res.cookie(process.env.ACCESS_TOKEN, body.access_token);
+          res.cookie(process.env.REFRESH_TOKEN, body.refresh_token);
+          res.redirect('http://localhost:3000');
         } else {
           res.redirect(
             '/#' +

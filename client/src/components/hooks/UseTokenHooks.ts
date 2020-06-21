@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getHashParams } from '../../api/utils';
+import Cookies from 'js-cookie';
 
 interface ITokenState {
   accessToken: string;
@@ -11,10 +11,11 @@ export const useTokenHooks = (): ITokenState => {
   const [refreshToken, setRefreshToken] = useState('');
 
   useEffect(() => {
-    const params = getHashParams();
-    if (params) {
-      setAccessToken(params.access_token);
-      setRefreshToken(params.refresh_token);
+    const access = Cookies.get('access_token');
+    const refresh = Cookies.get('refresh_token');
+    if (access && refresh) {
+      setAccessToken(access);
+      setRefreshToken(refresh);
     }
   }, []);
 
