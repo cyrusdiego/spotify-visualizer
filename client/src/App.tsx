@@ -9,13 +9,17 @@ import { useVisibilityHooks } from './components/hooks/UseVisibilityHooks';
 import { Switch, Route } from 'react-router-dom';
 
 const App = () => {
-  const { accessToken, refreshToken } = useTokenHooks();
+  const { accessToken, refreshToken, setAccessToken } = useTokenHooks();
   useVisibilityHooks();
 
   return (
     <Switch>
       <Route path='/visualizer'>
-        <Visualizer accessToken={accessToken} refreshToken={refreshToken} />
+        <Visualizer
+          accessToken={accessToken}
+          refreshToken={refreshToken}
+          setAccessToken={setAccessToken}
+        />
       </Route>
       <Route path='/'>
         <Landing />

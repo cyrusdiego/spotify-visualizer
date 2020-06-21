@@ -1,82 +1,20 @@
 import axios, { AxiosResponse } from 'axios';
-import { spotifyBaseUrl, spotifyCurrentTrack } from './constants';
+import {
+  IPlayerResp,
+  IAudioFeatures,
+  IAudioAnalysis,
+  ITokenResp,
+} from './types';
 
-export type image = {
-  height: number;
-  width: number;
-  url: string;
-};
-
-type artists = {
-  name: string;
-};
-
-type album = {
-  name: string;
-  images: image[];
-};
-
-interface IPlayerResp {
-  item: {
-    album: album;
-    artists: artists[];
-    name: string;
-    id: string;
-    duration_ms: number;
-  };
-  progress_ms: number;
-}
-
-interface IAudioFeatures {
-  duration_ms: number;
-  time_signature: number;
-}
-
-export interface IAudioAnalysis {
-  bars: timeInterval[];
-  beats: timeInterval[];
-  sections: section[];
-  segments: segment[];
-  tatums: timeInterval[];
-}
-
-export type timeInterval = {
-  start: number;
-  duration: number;
-  confidence: number;
-};
-
-export type segment = {
-  start: number;
-  duration: number;
-  confidence: number;
-  loudnessStart: number;
-  loudnessMax: number;
-  loudnessMaxTime: number;
-  loudnessEnd: number;
-  pitches: number[];
-  timbre: number[];
-};
-
-export type section = {
-  start: number;
-  duration: number;
-  confidence: number;
-  loudness: number;
-  tempo: number;
-  tempoConfidence: number;
-  key: number;
-  keyConfidence: number;
-  mode: number;
-  modeConfidence: number;
-  timeSignature: number;
-  timeSignatureConfidence: number;
-};
-
+const SPOTIFY_BASE_URL = 'https://api.spotify.com/v1';
+const CURRENT_TRACK = '/me/player/currently-playing';
+const REFRESH_TOKEN_URL = 'http://localhost:8888/refresh';
+const AUDIO_FEATURES = '/audio-features/';
+const AUDIO_ANALYSIS = '/audio-analysis/';
 export const getCurrentTrack = (
   token: string
 ): Promise<AxiosResponse<IPlayerResp>> => {
-  return axios(spotifyBaseUrl + spotifyCurrentTrack, {
+  return axios(SPOTIFY_BASE_URL + CURRENT_TRACK, {
     headers: { Authorization: 'Bearer ' + token },
     method: 'GET',
   });
@@ -86,7 +24,7 @@ export const getAudioFeatures = (
   token: string,
   trackID: string
 ): Promise<AxiosResponse<IAudioFeatures>> => {
-  return axios(spotifyBaseUrl + '/audio-features/' + trackID, {
+  return axios(SPOTIFY_BASE_URL + AUDIO_FEATURES + trackID, {
     headers: { Authorization: 'Bearer ' + token },
     method: 'GET',
   });
@@ -96,10 +34,19 @@ export const getAudioAnalysis = (
   token: string,
   trackID: string
 ): Promise<AxiosResponse<IAudioAnalysis>> => {
-  // pauseSong(token);
-  return axios(spotifyBaseUrl + '/audio-analysis/' + trackID, {
+  return axios(SPOTIFY_BASE_URL + AUDIO_ANALYSIS + trackID, {
     headers: { Authorization: 'Bearer ' + token },
     method: 'GET',
+  });
+};
+
+export const getNewAccessToken = (
+  token: string
+): Promise<AxiosResponse<ITokenResp>> => {
+  return axios(REFRESH_TOKEN_URL, {
+    data: {
+      token: token,
+    },
   });
 };
 
@@ -113,7 +60,7 @@ export const syncTrack = (token: string): void => {
 };
 
 const restartSong = (token: string): Promise<AxiosResponse> => {
-  return axios(spotifyBaseUrl + '/me/player/seek', {
+  return axios(SPOTIFY_BASE_URL + '/me/player/seek', {
     headers: { Authorization: 'Bearer ' + token },
     params: {
       position_ms: 0,
@@ -123,14 +70,14 @@ const restartSong = (token: string): Promise<AxiosResponse> => {
 };
 
 const pauseSong = (token: string): Promise<AxiosResponse> => {
-  return axios(spotifyBaseUrl + '/me/player/pause', {
+  return axios(SPOTIFY_BASE_URL + '/me/player/pause', {
     headers: { Authorization: 'Bearer ' + token },
     method: 'PUT',
   });
 };
 
 const playSong = (token: string): Promise<AxiosResponse> => {
-  return axios(spotifyBaseUrl + '/me/player/play', {
+  return axios(SPOTIFY_BASE_URL + '/me/player/play', {
     headers: { Authorization: 'Bearer ' + token },
     method: 'PUT',
   });

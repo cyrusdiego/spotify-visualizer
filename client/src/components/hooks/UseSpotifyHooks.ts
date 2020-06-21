@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react';
 import {
   getAudioAnalysis,
   getCurrentTrack,
-  segment,
-  section,
-  timeInterval,
+  getNewAccessToken,
 } from '../../api/spotify';
+import { segment, section, timeInterval } from '../../api/types';
 
 interface ITrackInfo {
   available: boolean;
@@ -57,7 +56,11 @@ const setInitialTrackAnalysis: () => ITrackAnalysis = () => {
   };
 };
 
-export const useSpotifyHooks = (accessToken: string): ISpotifyData => {
+export const useSpotifyHooks = (
+  accessToken: string,
+  refreshToken: string,
+  setAccessToken: React.Dispatch<React.SetStateAction<string>>
+): ISpotifyData => {
   // Hooks
   const [currentTrack, setCurrentTrack] = useState(setInitialTrackState());
   const [trackAnalysis, setTrackAnalysis] = useState(setInitialTrackAnalysis());
@@ -95,6 +98,10 @@ export const useSpotifyHooks = (accessToken: string): ISpotifyData => {
       .then((response) => {
         if (response.status === 204) {
           setInitialTrackState();
+        } else if (response.status === 401) {
+          getNewAccessToken(refreshToken).then((response) => {
+            setAccessToken(response.data.access_token);
+          });
         } else {
           const playerData = response.data;
           if (playerData.item.id === currentTrack.id) {

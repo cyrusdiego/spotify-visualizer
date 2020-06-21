@@ -7,12 +7,15 @@ import { useSpotifyHooks } from './hooks/UseSpotifyHooks';
 interface IPlayerProps {
   accessToken: string;
   refreshToken: string;
+  setAccessToken: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const Visualizer: FC<IPlayerProps> = (props) => {
-  const { accessToken, refreshToken } = props;
+  const { accessToken, refreshToken, setAccessToken } = props;
   const { trackInfo, trackAnalysis, updateTrackHandler } = useSpotifyHooks(
-    accessToken
+    accessToken,
+    refreshToken,
+    setAccessToken
   );
   const isReady = trackInfo.available && trackAnalysis.available;
   const refreshClick = (event: React.MouseEvent<HTMLButtonElement>) => {

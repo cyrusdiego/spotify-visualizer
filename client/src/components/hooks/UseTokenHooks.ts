@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 interface ITokenState {
   accessToken: string;
   refreshToken: string;
+  setAccessToken: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const useTokenHooks = (): ITokenState => {
@@ -22,5 +23,6 @@ export const useTokenHooks = (): ITokenState => {
   return {
     accessToken,
     refreshToken,
+    setAccessToken,
   };
 };
