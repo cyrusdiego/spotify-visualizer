@@ -35,18 +35,21 @@ export const useRenderHooks = (
   trackProgress: number, // at time of api return
   bpm: number, // calcualted from average section tempos
   spectrum: number[][], // full song spectrum
-  timeError: number // time elapsedTime was measured
+  timeError: number, // time elapsedTime was measured
+  updateTrack: () => void // gets next track when song ends
 ) => {
   const [canvas, setCanvas] = useState(setInitialCanvas());
   const interval = 60 / bpm;
   // get time difference between time of api data return and now
   const pause = getTimeDiff(interval, timeError, trackProgress);
   let beatIndex = getCurrentBeatIndex(trackProgress, interval);
-
   const fps = 60;
   const bars = 12;
   const timeDiffOnDraw = (0.5 * (fps * fps)) / bpm;
   const minHeight = 50;
+  let colorIdx = 0;
+  let timeoutId: NodeJS.Timeout;
+  let requestId: number;
 
   // get canvas information
   useEffect(() => {
@@ -74,9 +77,6 @@ export const useRenderHooks = (
     }
   }, [canvasRef]);
 
-  let colorIdx = 0;
-  let timeoutId: NodeJS.Timeout;
-  let requestId: number;
   useEffect(() => {
     if (
       !canvas.context ||
@@ -167,6 +167,7 @@ export const useRenderHooks = (
             canvas.width,
             -canvas.maxBarHeight
           );
+          updateTrack();
           return;
         }
 

@@ -17,7 +17,14 @@ export const Spectrum: FC<ISpectrumProps> = (props) => {
   const height = window.innerHeight;
   const width = window.innerWidth;
   const { bpm, spectrum } = useAnalyzeHooks(trackAnalysis);
-  useRenderHooks(canvas, trackProgress, bpm, spectrum, timeMeasured);
+  useRenderHooks(
+    canvas,
+    trackProgress,
+    bpm,
+    spectrum,
+    timeMeasured,
+    updateTrack
+  );
 
   return (
     <div className='spectrum_container'>
