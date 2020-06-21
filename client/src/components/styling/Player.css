@@ -47,7 +47,7 @@
 }
 
 .refresh_button:active {
-  background-color: #363636;
+  background-color: #fff;
   fill: #000;
   border-color: #000;
 }
