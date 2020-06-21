@@ -3,7 +3,6 @@ const request = require('request');
 module.exports = (app) => {
   app.get('/refresh', (req, res, next) => {
     const refresh_token = req.query.token;
-
     if (!refresh_token) {
       res.status(400);
       res.send({ ERROR: 'No token provided.' });
@@ -16,7 +15,9 @@ module.exports = (app) => {
         Authorization:
           'Basic ' +
           new Buffer(
-            process.env.CLIENT_ID + ':' + process.env.CLIENT_SECRET
+            process.env.SPOTIFY_CLIENT_ID +
+              ':' +
+              process.env.SPOTIFY_CLIENT_SECRETY
           ).toString('base64'),
       },
       form: {

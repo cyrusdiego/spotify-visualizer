@@ -98,10 +98,6 @@ export const useSpotifyHooks = (
       .then((response) => {
         if (response.status === 204) {
           setInitialTrackState();
-        } else if (response.status === 401) {
-          getNewAccessToken(refreshToken).then((response) => {
-            setAccessToken(response.data.access_token);
-          });
         } else {
           const playerData = response.data;
           if (playerData.item.id === currentTrack.id) {
@@ -126,7 +122,11 @@ export const useSpotifyHooks = (
         }
       })
       .catch((err) => {
-        throw err;
+        if (err.response.status === 401) {
+          getNewAccessToken(refreshToken).then((response) => {
+            setAccessToken(response.data.access_token);
+          });
+        }
       });
   };
 

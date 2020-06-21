@@ -11,6 +11,7 @@ const CURRENT_TRACK = '/me/player/currently-playing';
 const REFRESH_TOKEN_URL = 'http://localhost:8888/refresh';
 const AUDIO_FEATURES = '/audio-features/';
 const AUDIO_ANALYSIS = '/audio-analysis/';
+
 export const getCurrentTrack = (
   token: string
 ): Promise<AxiosResponse<IPlayerResp>> => {
@@ -44,7 +45,7 @@ export const getNewAccessToken = (
   token: string
 ): Promise<AxiosResponse<ITokenResp>> => {
   return axios(REFRESH_TOKEN_URL, {
-    data: {
+    params: {
       token: token,
     },
   });
