@@ -1,0 +1,13 @@
+.player_container {
+  height: 100vh;
+}
+
+.error_container {
+  font-family: 'Montserrat', sans-serif;
+  text-align: center;
+  color: gray;
+  position: relative;
+  top: 25%;
+  transform: translateY(-50%);
+  display: block;
+}

@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Player } from './Player';
 import { Spectrum } from './Spectrum';
-import './styling/Player.css';
+import './styling/Visualizer.css';
 import { useSpotifyHooks } from './hooks/UseSpotifyHooks';
 
 interface IPlayerProps {
@@ -38,7 +38,10 @@ export const Visualizer: FC<IPlayerProps> = (props) => {
           updateTrack={updateTrackHandler}
         />
       ) : (
-        ''
+        <div className='error_container'>
+          <h1>Ensure track is playing</h1>
+          <h3>Press refresh button</h3>
+        </div>
       )}
     </div>
   );

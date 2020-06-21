@@ -8,18 +8,24 @@ interface IPlayerProps {
     art: string;
   };
   refresh: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  isReady: boolean;
 }
 
-export const Player: FC<IPlayerProps> = ({ currentTrack, refresh }) => {
-  const { artist, name, art } = currentTrack;
-  const refreshOnClick = refresh;
+export const Player: FC<IPlayerProps> = (props) => {
+  const { artist, name, art } = props.currentTrack;
+  const refreshOnClick = props.refresh;
+  const isReady = props.isReady;
   return (
     <div className='current_song'>
-      <img src={art} alt='' className='album_art'></img>
-      <div className='song_info'>
-        <h2>{name}</h2>
-        <h3>{artist}</h3>
-      </div>
+      {isReady && (
+        <div className='song_info_container'>
+          <img src={art} alt='' className='album_art'></img>
+          <div className='song_info'>
+            <h2>{name}</h2>
+            <h3>{artist}</h3>
+          </div>
+        </div>
+      )}
       <div className='refresh_container'>
         <button
           type='button'

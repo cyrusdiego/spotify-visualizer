@@ -1,7 +1,3 @@
-.player_container {
-  height: 100vh;
-}
-
 .album_art {
   width: 150px;
   height: 150px;
@@ -10,6 +6,7 @@
   transform: translateY(-50%);
   display: block;
   margin: 0px 20px 0px 20px;
+  flex: 1;
 }
 
 .current_song {
@@ -18,6 +15,10 @@
   color: gray;
   width: 100vw;
   height: 20%;
+}
+
+.song_info_container {
+  display: flex;
 }
 
 .song_info {
