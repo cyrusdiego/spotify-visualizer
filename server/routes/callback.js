@@ -44,7 +44,7 @@ module.exports = (app) => {
         if (!error && response.statusCode === 200) {
           res.cookie(process.env.ACCESS_TOKEN, body.access_token);
           res.cookie(process.env.REFRESH_TOKEN, body.refresh_token);
-          res.redirect('http://localhost:3000');
+          res.redirect('http://localhost:3000/visualizer');
         } else {
           res.redirect(
             '/#' +

@@ -6,14 +6,21 @@ import { Landing } from './components/Landing';
 import { Visualizer } from './components/Visualizer';
 import { useTokenHooks } from './components/hooks/UseTokenHooks';
 import { useVisibilityHooks } from './components/hooks/UseVisibilityHooks';
+import { Switch, Route } from 'react-router-dom';
 
 const App = () => {
   const { accessToken, refreshToken } = useTokenHooks();
   useVisibilityHooks();
-  return accessToken ? (
-    <Visualizer accessToken={accessToken} refreshToken={refreshToken} />
-  ) : (
-    <Landing />
+
+  return (
+    <Switch>
+      <Route path='/visualizer'>
+        <Visualizer accessToken={accessToken} refreshToken={refreshToken} />
+      </Route>
+      <Route path='/'>
+        <Landing />
+      </Route>
+    </Switch>
   );
 };
 
