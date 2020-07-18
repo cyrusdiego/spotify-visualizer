@@ -1,30 +1,19 @@
-// global to hold current beat index and avoid re calculation
-let beatIndex = 0;
-
 export const getTimeDiff = (
   interval: number, // time between beats
   timeMeasured: number, // time the elapsed time was recieved from api
   trackProgress: number // elapsed time of track
-): number => {
-  if (!isFinite(interval)) return 0;
+): { pause: number; startingBeat: number } => {
+  if (!isFinite(interval)) return { pause: 0, startingBeat: -1 };
+
   const half = interval / 2;
   const correctedTrackProgress =
     trackProgress + (window.performance.now() / 1000 - timeMeasured);
-  beatIndex = 0;
-  const startingBeatIndex = getCurrentBeatIndex(
-    correctedTrackProgress,
-    interval
-  );
+  const startingBeatIndex = Math.round(correctedTrackProgress / interval);
   const nextBeatTime = startingBeatIndex * interval;
   const timeWindowMs = nextBeatTime - correctedTrackProgress;
-  return timeWindowMs < half ? timeWindowMs + half : timeWindowMs - half;
-};
+  const start = timeWindowMs < half ? timeWindowMs + half : timeWindowMs - half;
+  const actualStartingBeatIndex =
+    timeWindowMs < half ? startingBeatIndex + 1 : startingBeatIndex;
 
-// experiment with the returning beat index
-export const getCurrentBeatIndex = (total: number, period: number) => {
-  if (beatIndex !== 0) return beatIndex;
-  else {
-    beatIndex = Math.round(total / period);
-    return beatIndex;
-  }
+  return { pause: start, startingBeat: actualStartingBeatIndex };
 };

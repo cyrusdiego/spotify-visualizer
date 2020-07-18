@@ -1,6 +1,6 @@
 // credit: http://www.petecorey.com/blog/2019/08/19/animating-a-canvas-with-react-hooks/
 import { useState, useEffect } from 'react';
-import { getTimeDiff, getCurrentBeatIndex } from './utils/renderUtils';
+import { getTimeDiff } from './utils/renderUtils';
 
 interface ICanvasInfo {
   context: CanvasRenderingContext2D | null;
@@ -41,8 +41,12 @@ export const useRenderHooks = (
   const [canvas, setCanvas] = useState(setInitialCanvas());
   const interval = 60 / bpm;
   // get time difference between time of api data return and now
-  const pause = getTimeDiff(interval, timeError, trackProgress);
-  let beatIndex = getCurrentBeatIndex(trackProgress, interval);
+  const { pause, startingBeat } = getTimeDiff(
+    interval,
+    timeError,
+    trackProgress
+  );
+  let beatIndex = startingBeat;
   const fps = 60;
   const bars = 12;
   const timeDiffOnDraw = (0.5 * (fps * fps)) / bpm;
@@ -89,6 +93,10 @@ export const useRenderHooks = (
 
     // arrays to hold current height, goal height, previous height, and difference in heights
     let barHeights = new Array(12).fill(0);
+    if (beatIndex > spectrum.length) {
+      updateTrack();
+      return;
+    }
     let currentGoal = spectrum[beatIndex];
     let oldGoal = new Array(12).fill(0);
     let diffGoal = currentGoal.map((height, note) =>
