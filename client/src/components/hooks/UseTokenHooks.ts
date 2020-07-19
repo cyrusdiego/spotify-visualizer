@@ -14,6 +14,7 @@ export const useTokenHooks = (): ITokenState => {
   useEffect(() => {
     const access = Cookies.get('access_token');
     const refresh = Cookies.get('refresh_token');
+
     if (access && refresh) {
       setAccessToken(access);
       setRefreshToken(refresh);

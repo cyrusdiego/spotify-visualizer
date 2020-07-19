@@ -8,7 +8,7 @@ import {
 
 const SPOTIFY_BASE_URL = 'https://api.spotify.com/v1';
 const CURRENT_TRACK = '/me/player/currently-playing';
-const REFRESH_TOKEN_URL = 'http://localhost:8888/refresh';
+const REFRESH_TOKEN_URL = 'https://spotify-visualizer-14c21.web.app/refresh';
 const AUDIO_FEATURES = '/audio-features/';
 const AUDIO_ANALYSIS = '/audio-analysis/';
 

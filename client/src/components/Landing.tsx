@@ -6,7 +6,7 @@ export const Landing: FC<{}> = () => {
     <div id='landing'>
       <h1 id='landing-text'>ChromaViz</h1>
       <h2 id='landing-sub-text'>visualizing the chromatic scale</h2>
-      <a href='http://localhost:8888/login'>
+      <a href='https://spotify-visualizer-14c21.web.app/login'>
         <button type='button' className='login_button btn btn-dark'>
           Log In
           <svg
